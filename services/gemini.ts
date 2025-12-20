@@ -1,7 +1,8 @@
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { ZoneId } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 const SYSTEM_INSTRUCTIONS = `
 You are a gentle, supportive, and non-judgmental practice partner named "Zone Guide".
@@ -23,7 +24,12 @@ const ZONE_PROMPTS: Record<ZoneId, string> = {
   business: "I want to practice brainstorming business ideas. Ask me about my interests, and help me come up with a low-stress side hustle idea.",
 };
 
+const OFFLINE_MESSAGE = "The AI is currently offline, but you can still use this space for practice.";
+
 export const generateInitialPrompt = async (zoneId: ZoneId): Promise<string> => {
+  if (!ai) {
+    return OFFLINE_MESSAGE;
+  }
   try {
     const specificPrompt = ZONE_PROMPTS[zoneId];
     const response: GenerateContentResponse = await ai.models.generateContent({
@@ -42,6 +48,9 @@ export const generateResponse = async (
   history: { role: string; content: string }[],
   userMessage: string
 ): Promise<string> => {
+  if (!ai) {
+    return OFFLINE_MESSAGE;
+  }
   try {
     // Construct a simple chat history string for context (stateless for simplicity here, but robust)
     const context = history.map(m => `${m.role === 'user' ? 'User' : 'Guide'}: ${m.content}`).join('\n');
