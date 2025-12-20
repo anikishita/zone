@@ -5,11 +5,13 @@ interface FeatureCardProps {
   onClose: () => void;
 }
 
+const TOTAL_STEPS = 4;
+
 const FeatureCard: React.FC<FeatureCardProps> = ({ onClose }) => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const handleNext = () => {
-    setCurrentStep(prev => prev + 1);
+    setCurrentStep(prev => Math.min(prev + 1, TOTAL_STEPS - 1));
   };
 
   return (
@@ -68,11 +70,11 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ onClose }) => {
                   
                   {/* Progress indicator */}
                   <div className="flex gap-1.5 mt-4">
-                    {[0, 1, 2, 3].map((step) => (
+                    {Array.from({ length: TOTAL_STEPS }, (_, index) => (
                       <div 
-                        key={step}
+                        key={index}
                         className={`h-1.5 rounded-full flex-1 transition-all duration-300 ${
-                          step <= currentStep ? 'bg-brand-500' : 'bg-slate-200'
+                          index <= currentStep ? 'bg-brand-500' : 'bg-slate-200'
                         }`}
                       />
                     ))}
