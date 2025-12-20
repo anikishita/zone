@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { BookOpen, Mic, PenTool, Brain, Gamepad2, Briefcase, Heart, Shield, Sparkles, Layers } from 'lucide-react';
+import { BookOpen, Mic, PenTool, Brain, Gamepad2, Briefcase, Heart, Shield, Sparkles } from 'lucide-react';
 import ZoneCard from './components/ZoneCard';
 import PracticeModal from './components/PracticeModal';
-import FeatureCard from './components/FeatureCard';
 import { ZoneConfig } from './types';
 
 const ZONES: ZoneConfig[] = [
@@ -64,7 +63,11 @@ const ZONES: ZoneConfig[] = [
 
 const App: React.FC = () => {
   const [activeZone, setActiveZone] = useState<ZoneConfig | null>(null);
-  const [showFeatureCard, setShowFeatureCard] = useState(false);
+  const [selectedZoneForFeature, setSelectedZoneForFeature] = useState<ZoneConfig | null>(null);
+
+  const handleExploreClick = (zone: ZoneConfig) => {
+    setSelectedZoneForFeature(zone);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-brand-50/20 relative overflow-hidden">
@@ -176,84 +179,37 @@ const App: React.FC = () => {
             <ZoneCard 
               key={zone.id} 
               zone={zone} 
-              onClick={setActiveZone} 
+              onPracticeClick={setActiveZone}
+              onExploreClick={handleExploreClick}
             />
           ))}
         </div>
-      </section>
 
-      {/* AI Tools Section - Completely redesigned */}
-      <section className="py-20 px-4 max-w-7xl mx-auto relative z-10">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-brand-500 via-brand-600 to-indigo-600 p-1 shadow-2xl shadow-brand-500/30">
-          <div className="bg-gradient-to-br from-white via-brand-50/50 to-indigo-50/50 rounded-[2.4rem] p-10 md:p-16 backdrop-blur-xl">
-            <div className="max-w-4xl mx-auto text-center">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-white border-2 border-brand-200 text-brand-700 text-xs font-bold mb-8 shadow-lg">
-                <Sparkles className="w-4 h-4 animate-pulse" />
-                <span>AI-POWERED TOOLS</span>
+        {/* Featured Card/Tool Placeholder */}
+        {selectedZoneForFeature && (
+          <div className="mt-12 animate-fade-in">
+            <div className="p-8 rounded-2xl bg-white border-2 border-slate-200 shadow-xl">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-slate-800">Featured Content</h3>
+                <button
+                  onClick={() => setSelectedZoneForFeature(null)}
+                  className="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+                >
+                  Close
+                </button>
               </div>
-              
-              {/* Title */}
-              <h2 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-6">
-                Enhanced Learning Experience
-              </h2>
-              <p className="text-lg md:text-xl text-slate-600 mb-12 leading-relaxed font-medium max-w-2xl mx-auto">
-                Explore advanced features designed to make your learning journey even more engaging and personalized.
-              </p>
-              
-              {/* Feature Card Button - Completely redesigned */}
-              <button
-                onClick={() => setShowFeatureCard(true)}
-                className="group inline-flex items-center gap-4 px-8 py-6 bg-gradient-to-r from-white to-brand-50 rounded-3xl border-2 border-white shadow-2xl hover:shadow-brand-500/20 transition-all transform hover:-translate-y-2 hover:scale-105"
-              >
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-brand-400 to-brand-600 rounded-2xl blur opacity-60 group-hover:opacity-100 transition-opacity"></div>
-                  <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center shadow-lg">
-                    <Layers className="w-8 h-8 text-white" />
-                  </div>
+              <div className="text-center py-16">
+                <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 ${selectedZoneForFeature.bgColor} ${selectedZoneForFeature.color} shadow-lg`}>
+                  {selectedZoneForFeature.icon}
                 </div>
-                <div className="text-left flex-1">
-                  <div className="text-xl font-bold text-slate-800 group-hover:text-brand-600 transition-colors mb-1">
-                    Feature Card
-                  </div>
-                  <div className="text-sm text-slate-500 font-medium">
-                    Interactive learning component
-                  </div>
-                </div>
-                <div className="text-brand-500 group-hover:translate-x-2 transition-transform">
-                  <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </div>
-              </button>
-
-              {/* Additional features showcase */}
-              <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-white/60 shadow-lg text-center">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center mx-auto mb-3 shadow-lg">
-                    <Brain className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="font-bold text-slate-800 mb-2">Smart AI</h3>
-                  <p className="text-sm text-slate-600">Personalized learning paths</p>
-                </div>
-                <div className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-white/60 shadow-lg text-center">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center mx-auto mb-3 shadow-lg">
-                    <Shield className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="font-bold text-slate-800 mb-2">Safe Space</h3>
-                  <p className="text-sm text-slate-600">100% judgment-free zone</p>
-                </div>
-                <div className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-white/60 shadow-lg text-center">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center mx-auto mb-3 shadow-lg">
-                    <Heart className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="font-bold text-slate-800 mb-2">Your Pace</h3>
-                  <p className="text-sm text-slate-600">Learn at your own speed</p>
-                </div>
+                <h4 className="text-xl font-bold text-slate-800 mb-2">{selectedZoneForFeature.title}</h4>
+                <p className="text-slate-600 max-w-md mx-auto">
+                  Featured content for {selectedZoneForFeature.title} will appear here. This space is reserved for dynamic tools and resources.
+                </p>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </section>
 
       {/* About Section - Enhanced modern design */}
@@ -375,12 +331,6 @@ const App: React.FC = () => {
         <PracticeModal 
           zone={activeZone} 
           onClose={() => setActiveZone(null)} 
-        />
-      )}
-      
-      {showFeatureCard && (
-        <FeatureCard 
-          onClose={() => setShowFeatureCard(false)} 
         />
       )}
     </div>

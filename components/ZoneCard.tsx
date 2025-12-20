@@ -1,17 +1,16 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
 import { ZoneConfig } from '../types';
 
 interface ZoneCardProps {
   zone: ZoneConfig;
-  onClick: (zone: ZoneConfig) => void;
+  onPracticeClick: (zone: ZoneConfig) => void;
+  onExploreClick: (zone: ZoneConfig) => void;
 }
 
-const ZoneCard: React.FC<ZoneCardProps> = ({ zone, onClick }) => {
+const ZoneCard: React.FC<ZoneCardProps> = ({ zone, onPracticeClick, onExploreClick }) => {
   return (
     <div 
-      onClick={() => onClick(zone)}
-      className={`group relative p-8 rounded-3xl bg-white/80 backdrop-blur-sm border-2 border-slate-100 hover:border-brand-300 shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer overflow-hidden transform hover:-translate-y-2 hover:scale-105`}
+      className={`group relative p-8 rounded-3xl bg-white/80 backdrop-blur-sm border-2 border-slate-100 hover:border-brand-300 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden`}
     >
       {/* Gradient background effect */}
       <div className={`absolute inset-0 bg-gradient-to-br ${zone.bgColor} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}></div>
@@ -35,11 +34,16 @@ const ZoneCard: React.FC<ZoneCardProps> = ({ zone, onClick }) => {
           {zone.description}
         </p>
         
-        {/* CTA with arrow */}
-        <div className="flex items-center text-sm font-bold text-slate-400 group-hover:text-brand-600 transition-colors">
-          <span>Enter Zone</span>
-          <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" />
-        </div>
+        {/* Explore Button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onExploreClick(zone);
+          }}
+          className="w-full px-6 py-3 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold hover:shadow-lg hover:shadow-brand-500/30 transition-all transform hover:-translate-y-0.5"
+        >
+          Explore
+        </button>
       </div>
 
       {/* Hover glow effect */}
