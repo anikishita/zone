@@ -6,7 +6,7 @@ const API_KEY = process.env.API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
 
 // Initialize AI with API key if available
 let ai: GoogleGenAI | null = null;
-if (API_KEY !== undefined && API_KEY !== '') {
+if (API_KEY) {
   try {
     ai = new GoogleGenAI({ apiKey: API_KEY });
   } catch (error) {
