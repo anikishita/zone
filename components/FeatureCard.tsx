@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ChevronRight, Sparkles, Zap } from 'lucide-react';
+import { X, ChevronRight, Sparkles } from 'lucide-react';
 
 interface FeatureCardProps {
   onClose: () => void;
@@ -20,8 +20,8 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ onClose }) => {
         {/* Enhanced Stacked Card Container */}
         <div className="relative group">
           {/* Background stacked layers with enhanced effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-brand-100 to-indigo-100 rounded-[2.5rem] transform translate-y-3 translate-x-3 opacity-20 group-hover:translate-y-4 group-hover:translate-x-4 transition-all duration-700 ease-out shadow-xl blur-sm"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-white to-brand-50 rounded-[2.5rem] transform translate-y-1.5 translate-x-1.5 opacity-50 group-hover:translate-y-2.5 group-hover:translate-x-2.5 transition-all duration-700 ease-out shadow-2xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-100 to-indigo-100 rounded-[2.5rem] transform translate-y-3 translate-x-3 opacity-20 group-hover:translate-y-4 group-hover:translate-x-4 transition-all duration-700 ease-out shadow-xl will-change-transform"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white to-brand-50 rounded-[2.5rem] transform translate-y-1.5 translate-x-1.5 opacity-50 group-hover:translate-y-2.5 group-hover:translate-x-2.5 transition-all duration-700 ease-out shadow-2xl will-change-transform"></div>
           
           {/* Main card with gradient border */}
           <div className="relative rounded-[2.5rem] p-1 bg-gradient-to-br from-brand-500 via-brand-600 to-indigo-600 shadow-2xl group-hover:shadow-[0_30px_70px_-15px_rgba(20,184,166,0.4)] transition-all duration-700 ease-out group-hover:-translate-y-2">

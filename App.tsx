@@ -71,8 +71,8 @@ const App: React.FC = () => {
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 -left-48 w-96 h-96 bg-brand-400/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-indigo-400/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-300/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }}></div>
+        <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-indigo-400/10 rounded-full blur-3xl animate-float animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-300/5 rounded-full blur-3xl animate-float animation-delay-4000"></div>
       </div>
       
       {/* Navbar - Enhanced glassmorphism */}
@@ -118,13 +118,13 @@ const App: React.FC = () => {
           </h1>
           
           {/* Subtitle with better contrast */}
-          <p className="text-lg sm:text-xl md:text-2xl text-slate-600 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in font-medium" style={{ animationDelay: '100ms' }}>
+          <p className="text-lg sm:text-xl md:text-2xl text-slate-600 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-delay-1 font-medium">
             Build skills quietly and confidently without pressure, judgment, or competition. 
             <span className="block mt-2 text-brand-600 font-semibold">No leaderboards. Just you and your progress.</span>
           </p>
           
           {/* Enhanced CTA buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 animate-fade-in" style={{ animationDelay: '200ms' }}>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 animate-fade-in-delay-2">
             <button 
               onClick={() => document.getElementById('zones')?.scrollIntoView({ behavior: 'smooth' })}
               className="group w-full sm:w-auto px-10 py-4 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold text-lg hover:shadow-2xl hover:shadow-brand-500/40 transition-all transform hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2"
@@ -336,8 +336,8 @@ const App: React.FC = () => {
                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white font-bold shadow-lg flex-shrink-0">Z</div>
                   <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-4 rounded-3xl rounded-tl-none shadow-md flex gap-1.5">
                     <div className="w-2 h-2 bg-brand-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-brand-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2 h-2 bg-brand-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    <div className="w-2 h-2 bg-brand-400 rounded-full animate-bounce animation-delay-150"></div>
+                    <div className="w-2 h-2 bg-brand-400 rounded-full animate-bounce animation-delay-300"></div>
                   </div>
                 </div>
               </div>

@@ -36,6 +36,8 @@
             animation: {
               'float': 'float 8s ease-in-out infinite',
               'fade-in': 'fadeIn 0.6s ease-out forwards',
+              'fade-in-delay-1': 'fadeIn 0.6s ease-out 0.1s forwards',
+              'fade-in-delay-2': 'fadeIn 0.6s ease-out 0.2s forwards',
               'slide-up': 'slideUp 0.5s ease-out forwards',
             },
             keyframes: {
@@ -73,6 +75,18 @@
       * {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+      }
+      .animation-delay-2000 {
+        animation-delay: 2s;
+      }
+      .animation-delay-4000 {
+        animation-delay: 4s;
+      }
+      .animation-delay-150 {
+        animation-delay: 150ms;
+      }
+      .animation-delay-300 {
+        animation-delay: 300ms;
       }
     </style>
   </head>
