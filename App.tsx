@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { BookOpen, Mic, PenTool, Brain, Gamepad2, Briefcase, Heart, Shield, Sparkles } from 'lucide-react';
+import { BookOpen, Mic, PenTool, Brain, Gamepad2, Briefcase, Heart, Shield, Sparkles, Layers } from 'lucide-react';
 import ZoneCard from './components/ZoneCard';
 import PracticeModal from './components/PracticeModal';
+import FeatureCard from './components/FeatureCard';
 import { ZoneConfig } from './types';
 
 const ZONES: ZoneConfig[] = [
@@ -63,6 +64,7 @@ const ZONES: ZoneConfig[] = [
 
 const App: React.FC = () => {
   const [activeZone, setActiveZone] = useState<ZoneConfig | null>(null);
+  const [showFeatureCard, setShowFeatureCard] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -140,6 +142,45 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* AI Tools Section */}
+      <section className="py-16 px-4 max-w-7xl mx-auto">
+        <div className="bg-gradient-to-br from-brand-50 via-white to-indigo-50 rounded-3xl p-8 md:p-12 border border-brand-100 shadow-lg">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-brand-200 text-brand-700 text-xs font-medium mb-6 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>AI-Powered Tools</span>
+            </div>
+            
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">
+              Enhanced Learning Experience
+            </h2>
+            <p className="text-slate-600 mb-8 leading-relaxed">
+              Explore advanced features designed to make your learning journey even more engaging and personalized.
+            </p>
+            
+            <button
+              onClick={() => setShowFeatureCard(true)}
+              className="group inline-flex items-center gap-3 px-6 py-4 bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl hover:border-brand-300 transition-all transform hover:-translate-y-1"
+            >
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center shadow-lg shadow-brand-500/30">
+                <Layers className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-left">
+                <div className="font-semibold text-slate-800 group-hover:text-brand-600 transition-colors">
+                  Feature Card
+                </div>
+                <div className="text-xs text-slate-500">
+                  Interactive learning component
+                </div>
+              </div>
+              <div className="ml-2 text-slate-400 group-hover:text-brand-500 group-hover:translate-x-1 transition-all">
+                <Sparkles className="w-4 h-4" />
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* About Section */}
       <section id="about" className="py-20 bg-white border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -212,6 +253,12 @@ const App: React.FC = () => {
         <PracticeModal 
           zone={activeZone} 
           onClose={() => setActiveZone(null)} 
+        />
+      )}
+      
+      {showFeatureCard && (
+        <FeatureCard 
+          onClose={() => setShowFeatureCard(false)} 
         />
       )}
     </div>
