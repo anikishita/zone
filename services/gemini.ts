@@ -1,7 +1,18 @@
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { ZoneId } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Get API key from environment variable
+const API_KEY = process.env.API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
+
+// Initialize AI with API key if available
+let ai: GoogleGenAI | null = null;
+if (API_KEY && API_KEY !== 'undefined') {
+  try {
+    ai = new GoogleGenAI({ apiKey: API_KEY });
+  } catch (error) {
+    console.error("Failed to initialize GoogleGenAI:", error);
+  }
+}
 
 const SYSTEM_INSTRUCTIONS = `
 You are a gentle, supportive, and non-judgmental practice partner named "Zone Guide".
@@ -24,6 +35,10 @@ const ZONE_PROMPTS: Record<ZoneId, string> = {
 };
 
 export const generateInitialPrompt = async (zoneId: ZoneId): Promise<string> => {
+  if (!ai) {
+    return "⚠️ Welcome! I need an API key to assist you fully. Please set your GEMINI_API_KEY environment variable. In the meantime, feel free to explore the zones!";
+  }
+  
   try {
     const specificPrompt = ZONE_PROMPTS[zoneId];
     const response: GenerateContentResponse = await ai.models.generateContent({
@@ -42,6 +57,10 @@ export const generateResponse = async (
   history: { role: string; content: string }[],
   userMessage: string
 ): Promise<string> => {
+  if (!ai) {
+    return "⚠️ I need an API key to respond. Please configure your GEMINI_API_KEY environment variable to enable AI responses.";
+  }
+  
   try {
     // Construct a simple chat history string for context (stateless for simplicity here, but robust)
     const context = history.map(m => `${m.role === 'user' ? 'User' : 'Guide'}: ${m.content}`).join('\n');
