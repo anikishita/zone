@@ -35,7 +35,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message, isVisible, onClose }) 
         </div>
         
         {/* Message */}
-        <div className="ml-13">
+        <div className="ml-12">
           <p className="text-sm text-slate-600 leading-relaxed">{message}</p>
         </div>
         
