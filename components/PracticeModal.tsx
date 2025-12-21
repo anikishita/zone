@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Send, Mic, RefreshCw, Volume2, BookOpen, PenTool, Brain, Gamepad2, Briefcase, ArrowRight } from 'lucide-react';
-import { ZoneConfig, ChatMessage } from '../types';
+import { ZoneConfig, ChatMessage, ZoneId } from '../types';
 import { generateInitialPrompt, generateResponse } from '../services/gemini';
 
 interface PracticeModalProps {
@@ -176,13 +176,13 @@ const PracticeModal: React.FC<PracticeModalProps> = ({ zone, onClose }) => {
       <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[80vh] md:h-[700px]">
         
         {/* Header */}
-        <div className={`px-6 py-4 flex items-center justify-between border-b border-slate-100 ${zone.bgColor}`}>
+        <div className={`px-6 py-4 flex items-center justify-between border-b border-slate-100 ${selectedZone ? selectedZone.bgColor : zone.bgColor}`}>
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-xl bg-white/50 ${zone.color}`}>
-              {zone.icon}
+            <div className={`p-2 rounded-xl bg-white/50 ${selectedZone ? selectedZone.color : zone.color}`}>
+              {selectedZone ? selectedZone.icon : zone.icon}
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-800">{zone.title}</h2>
+              <h2 className="text-lg font-semibold text-slate-800">{selectedZone ? selectedZone.title : zone.title}</h2>
               <p className="text-xs text-slate-500">Private Session • No Judgment</p>
             </div>
           </div>
@@ -195,7 +195,7 @@ const PracticeModal: React.FC<PracticeModalProps> = ({ zone, onClose }) => {
         {!selectedZone ? (
           /* Zone Selection Grid */
           <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
               {AVAILABLE_ZONES.map((zoneOption) => {
                 const IconComponent = zoneOption.icon;
                 return (
@@ -205,7 +205,7 @@ const PracticeModal: React.FC<PracticeModalProps> = ({ zone, onClose }) => {
                     onClick={() => {
                       // Create a full ZoneConfig object for the selected zone
                       const fullZoneConfig: ZoneConfig = {
-                        id: zoneOption.id as any,
+                        id: zoneOption.id as ZoneId,
                         title: zoneOption.title,
                         description: zoneOption.description,
                         icon: <IconComponent className="w-6 h-6" />,
