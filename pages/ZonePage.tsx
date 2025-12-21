@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import ChatBubble from '../components/ChatBubble';
 import { ZoneConfig } from '../types';
 
 interface Service {
@@ -13,6 +14,45 @@ interface Service {
 interface ZonePageProps {
   zones: ZoneConfig[];
 }
+
+const SERVICE_MESSAGES: Record<string, Record<string, string>> = {
+  reading: {
+    articles: "Great choice! Reading articles will help you build comprehension skills. Take your time and enjoy the process.",
+    comprehension: "Perfect! These exercises will gently test your understanding. Remember, there's no pressure here.",
+    vocabulary: "Wonderful! Learning new words in context is one of the best ways to expand your vocabulary.",
+    speed: "Excellent! Speed reading is a skill that develops gradually. Be patient with yourself.",
+  },
+  speaking: {
+    pronunciation: "Nice! Practicing pronunciation in private helps build confidence. You're in a safe space.",
+    conversation: "Great start! These conversation starters will help you feel more comfortable speaking.",
+    storytelling: "Lovely choice! Storytelling is a powerful way to practice organizing your thoughts.",
+    presentation: "Bold move! Practicing presentations here will help you feel prepared when it counts.",
+  },
+  writing: {
+    prompts: "Inspiring choice! Daily prompts can unlock creativity you didn't know you had.",
+    journaling: "Beautiful! Journaling is a wonderful way to express yourself freely.",
+    stories: "Exciting! Story writing lets your imagination run wild in a judgment-free zone.",
+    grammar: "Smart choice! Gentle grammar practice will strengthen your writing foundation.",
+  },
+  memory: {
+    sequences: "Good pick! Number sequences help train your brain to recognize patterns.",
+    matching: "Fun choice! Matching games are proven to strengthen memory recall.",
+    recall: "Excellent! Story recall exercises make memory practice engaging and meaningful.",
+    lists: "Practical choice! List memory skills are useful in everyday life.",
+  },
+  games: {
+    'word-search': "Relaxing choice! Word searches are perfect for stress-free vocabulary building.",
+    crossword: "Nice! Crosswords at your own pace let you think without time pressure.",
+    anagrams: "Clever! Anagrams are great for flexible thinking and word play.",
+    rhymes: "Musical choice! Playing with rhymes makes language learning fun.",
+  },
+  business: {
+    brainstorm: "Innovative choice! All ideas are welcome here - no judgment, just creativity.",
+    planning: "Strategic! Breaking ideas into steps makes big dreams feel achievable.",
+    pitch: "Brave choice! Practicing your pitch here will boost your confidence.",
+    research: "Smart move! Understanding your audience is key to any successful idea.",
+  },
+};
 
 const ZONE_SERVICES: Record<string, Service[]> = {
   reading: [
@@ -56,9 +96,20 @@ const ZONE_SERVICES: Record<string, Service[]> = {
 const ZonePage: React.FC<ZonePageProps> = ({ zones }) => {
   const { zoneId } = useParams<{ zoneId: string }>();
   const navigate = useNavigate();
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [chatMessage, setChatMessage] = useState<string>('');
+  const [showChatBubble, setShowChatBubble] = useState(false);
 
   const zone = zones.find(z => z.id === zoneId);
   const services = zoneId ? ZONE_SERVICES[zoneId] || [] : [];
+
+  const handleServiceClick = (service: Service) => {
+    setSelectedService(service);
+    const message = zoneId && SERVICE_MESSAGES[zoneId]?.[service.id] 
+      || "Great choice! Let's get started with this service.";
+    setChatMessage(message);
+    setShowChatBubble(true);
+  };
 
   if (!zone) {
     return (
@@ -112,10 +163,7 @@ const ZonePage: React.FC<ZonePageProps> = ({ zones }) => {
             <div
               key={service.id}
               className="group relative p-6 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden"
-              onClick={() => {
-                // TODO: Navigate to service page or open service modal
-                console.log('Service clicked:', service.id);
-              }}
+              onClick={() => handleServiceClick(service)}
             >
               <div className={`absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full opacity-20 transition-transform group-hover:scale-150 ${zone.bgColor}`}></div>
               
@@ -146,6 +194,13 @@ const ZonePage: React.FC<ZonePageProps> = ({ zones }) => {
           </div>
         )}
       </main>
+
+      {/* Chat Bubble */}
+      <ChatBubble
+        message={chatMessage}
+        isVisible={showChatBubble}
+        onClose={() => setShowChatBubble(false)}
+      />
     </div>
   );
 };

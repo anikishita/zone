@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, Shield, Sparkles } from 'lucide-react';
 import ZoneCard from '../components/ZoneCard';
+import ChatBubble from '../components/ChatBubble';
 import { ZoneConfig } from '../types';
 
 interface HomePageProps {
@@ -10,6 +11,16 @@ interface HomePageProps {
 
 const HomePage: React.FC<HomePageProps> = ({ zones }) => {
   const navigate = useNavigate();
+  const [showChatBubble, setShowChatBubble] = useState(false);
+
+  useEffect(() => {
+    // Show chat bubble after a short delay
+    const timer = setTimeout(() => {
+      setShowChatBubble(true);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -152,6 +163,13 @@ const HomePage: React.FC<HomePageProps> = ({ zones }) => {
         <p className="text-slate-400 text-sm mb-6">Designed for peace of mind.</p>
         <p className="text-slate-300 text-xs">© {new Date().getFullYear()} ZONE Educational Platform.</p>
       </footer>
+
+      {/* Chat Bubble */}
+      <ChatBubble
+        message="Welcome to ZONE! Choose a zone to explore services tailored to your learning journey. Remember, this is your safe space to grow at your own pace."
+        isVisible={showChatBubble}
+        onClose={() => setShowChatBubble(false)}
+      />
     </div>
   );
 };
