@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Minimize2, HelpCircle, BookOpen, Mic, PenTool, Brain, Gamepad2, Briefcase, Sparkles } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
-
-interface Message {
-  id: string;
-  text: string;
-  sender: 'bot' | 'user';
-  timestamp: Date;
-}
+import { ChatMessage } from '../types';
 
 const FloatingChatBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const location = useLocation();
+  const messageIdCounter = useRef(0);
+
+  // Generate unique message ID
+  const generateMessageId = () => {
+    messageIdCounter.current += 1;
+    return `msg-${Date.now()}-${messageIdCounter.current}`;
+  };
 
   // Context-aware welcome messages based on current page/zone
   const getContextualWelcome = (): string => {
@@ -67,22 +68,22 @@ const FloatingChatBot: React.FC = () => {
 
   // Initialize or update welcome message when location changes
   useEffect(() => {
-    const welcomeMessage: Message = {
-      id: Date.now().toString(),
-      text: getContextualWelcome(),
-      sender: 'bot',
-      timestamp: new Date(),
+    const welcomeMessage: ChatMessage = {
+      id: generateMessageId(),
+      content: getContextualWelcome(),
+      role: 'assistant',
+      timestamp: Date.now(),
     };
     
     const tip = getServiceTip();
     
     // Set initial messages - include tip if available
     if (tip) {
-      const tipMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: tip,
-        sender: 'bot',
-        timestamp: new Date(),
+      const tipMessage: ChatMessage = {
+        id: generateMessageId(),
+        content: tip,
+        role: 'assistant',
+        timestamp: Date.now(),
       };
       setMessages([welcomeMessage, tipMessage]);
     } else {
@@ -109,18 +110,18 @@ const FloatingChatBot: React.FC = () => {
   ];
 
   const handleQuickAction = (action: typeof quickActions[0]) => {
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: action.label,
-      sender: 'user',
-      timestamp: new Date(),
+    const userMessage: ChatMessage = {
+      id: generateMessageId(),
+      content: action.label,
+      role: 'user',
+      timestamp: Date.now(),
     };
     
-    const botMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      text: action.response,
-      sender: 'bot',
-      timestamp: new Date(),
+    const botMessage: ChatMessage = {
+      id: generateMessageId(),
+      content: action.response,
+      role: 'assistant',
+      timestamp: Date.now(),
     };
     
     setMessages(prev => [...prev, userMessage, botMessage]);
@@ -179,16 +180,16 @@ const FloatingChatBot: React.FC = () => {
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
                     className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                      message.sender === 'bot'
+                      message.role === 'assistant'
                         ? 'bg-white text-slate-700 shadow-sm border border-slate-100'
                         : 'bg-gradient-to-r from-brand-500 to-indigo-500 text-white shadow-md'
                     }`}
                   >
-                    <p className="text-sm leading-relaxed">{message.text}</p>
+                    <p className="text-sm leading-relaxed">{message.content}</p>
                   </div>
                 </div>
               ))}
