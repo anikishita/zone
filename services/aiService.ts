@@ -49,12 +49,24 @@ ${zoneConfig.aiRole}:`;
       const error = await response.json().catch(() => ({ error: 'Unknown error' }));
       console.error("API Error Response:", error);
       
-      // More helpful error message
+      // Specific error messages for different status codes
       if (response.status === 404) {
         return "I'm having trouble connecting. Make sure the API is deployed correctly. 🔧";
       }
       
-      return `Sorry, I'm having technical difficulties (${response.status}). The setup might need attention. Try refreshing the page?`;
+      if (response.status === 429) {
+        return "Whoa, I need a breather! The API has hit its rate limit. Try again in a minute or check your Gemini API quota. ⏱️";
+      }
+      
+      if (response.status === 500) {
+        return "Server hiccup! The API might be misconfigured. Check that GEMINI_API_KEY is set correctly in Vercel. 🔧";
+      }
+      
+      if (response.status === 403 || response.status === 401) {
+        return "API key issue! Check that your GEMINI_API_KEY is valid and has proper permissions. 🔑";
+      }
+      
+      return `Sorry, I'm having technical difficulties (error ${response.status}). Check the console for details. 🔧`;
     }
 
     const data = await response.json();
