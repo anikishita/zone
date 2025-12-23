@@ -4,7 +4,8 @@ import { BookOpen, Mic, PenTool, Brain, Gamepad2, Briefcase } from 'lucide-react
 import HomePage from './pages/HomePage';
 import ZonePage from './pages/ZonePage';
 import FitInterviewPage from './pages/FitInterviewPage';
-import FloatingChatBot from './components/FloatingChatBot';
+import AIFloatingChatBot from './components/AIFloatingChatBot';
+import { ChatProvider } from './contexts/ChatContext';
 import { ZoneConfig } from './types';
 
 const ZONES: ZoneConfig[] = [
@@ -66,14 +67,14 @@ const ZONES: ZoneConfig[] = [
 
 const App: React.FC = () => {
   return (
-    <>
+    <ChatProvider>
       <Routes>
         <Route path="/" element={<HomePage zones={ZONES} />} />
         <Route path="/zone/:zoneId" element={<ZonePage zones={ZONES} />} />
         <Route path="/fit-interview" element={<FitInterviewPage />} />
       </Routes>
-      <FloatingChatBot />
-    </>
+      <AIFloatingChatBot />
+    </ChatProvider>
   );
 };
 

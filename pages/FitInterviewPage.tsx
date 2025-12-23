@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import InterviewFlow from '../components/InterviewFlow';
+import { useZoneDetection } from '../contexts/ChatContext';
 
 /**
  * FitInterviewPage - Main page for the User Fit Interview feature
@@ -11,6 +12,9 @@ import InterviewFlow from '../components/InterviewFlow';
 const FitInterviewPage: React.FC = () => {
   const navigate = useNavigate();
   const [isStarted, setIsStarted] = useState(false);
+  
+  // Notify chat context (no specific zone for interview page)
+  useZoneDetection(null);
 
   // Landing screen before interview starts
   if (!isStarted) {

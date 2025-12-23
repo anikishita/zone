@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import ChatBubble from '../components/ChatBubble';
-import { ZoneConfig } from '../types';
+import { useZoneDetection } from '../contexts/ChatContext';
+import { ZoneConfig, ZoneId } from '../types';
 
 interface Service {
   id: string;
@@ -99,6 +100,9 @@ const ZonePage: React.FC<ZonePageProps> = ({ zones }) => {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [chatMessage, setChatMessage] = useState<string>('');
   const [showChatBubble, setShowChatBubble] = useState(false);
+  
+  // Notify chat context about current zone
+  useZoneDetection(zoneId as ZoneId | null);
 
   const zone = zones.find(z => z.id === zoneId);
   const services = zoneId ? ZONE_SERVICES[zoneId] || [] : [];
