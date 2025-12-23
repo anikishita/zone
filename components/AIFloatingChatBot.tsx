@@ -91,9 +91,9 @@ const AIFloatingChatBot: React.FC = () => {
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     // For open chat, only drag from header. For closed button, drag from anywhere
     const isChatHeader = (e.target as HTMLElement).closest('.chat-header');
-    const isClosedButton = !isOpen;
+    const isLauncherButton = !isOpen;
     
-    if (isChatHeader || isClosedButton) {
+    if (isChatHeader || isLauncherButton) {
       setIsDragging(true);
       setHasDragged(false);
       const rect = e.currentTarget.getBoundingClientRect();
@@ -156,7 +156,7 @@ const AIFloatingChatBot: React.FC = () => {
         onMouseDown={handleMouseDown}
       >
         <button
-          onClick={(e) => {
+          onClick={() => {
             // Only open if not dragging
             if (!hasDragged) {
               setIsOpen(true);
