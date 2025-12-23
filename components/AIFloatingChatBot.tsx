@@ -19,6 +19,7 @@ const AIFloatingChatBot: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [hasDragged, setHasDragged] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatRef = useRef<HTMLDivElement>(null);
   
@@ -88,20 +89,25 @@ const AIFloatingChatBot: React.FC = () => {
   
   // Dragging handlers
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLElement).closest('.chat-header')) {
+    // For open chat, only drag from header. For closed button, drag from anywhere
+    const isChatHeader = (e.target as HTMLElement).closest('.chat-header');
+    const isClosedButton = !isOpen;
+    
+    if (isChatHeader || isClosedButton) {
       setIsDragging(true);
-      const rect = chatRef.current?.getBoundingClientRect();
-      if (rect) {
-        setDragOffset({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top
-        });
-      }
+      setHasDragged(false);
+      const rect = e.currentTarget.getBoundingClientRect();
+      setDragOffset({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
+      e.preventDefault(); // Prevent text selection while dragging
     }
   };
   
   const handleMouseMove = (e: MouseEvent) => {
     if (isDragging) {
+      setHasDragged(true);
       setPosition({
         x: e.clientX - dragOffset.x,
         y: e.clientY - dragOffset.y
@@ -140,14 +146,29 @@ const AIFloatingChatBot: React.FC = () => {
   // Floating button (closed state)
   if (!isOpen) {
     return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-brand-500 to-indigo-500 text-white shadow-lg hover:shadow-xl hover:shadow-brand-500/30 transition-all transform hover:scale-110 flex items-center justify-center group"
-        aria-label="Open AI assistant"
+      <div
+        className="fixed z-50 w-14 h-14"
+        style={{
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+          cursor: isDragging ? 'grabbing' : 'grab'
+        }}
+        onMouseDown={handleMouseDown}
       >
-        <MessageCircle className="w-6 h-6 group-hover:scale-110 transition-transform" />
-        <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
-      </button>
+        <button
+          onClick={(e) => {
+            // Only open if not dragging
+            if (!hasDragged) {
+              setIsOpen(true);
+            }
+          }}
+          className="w-14 h-14 rounded-full bg-gradient-to-r from-brand-500 to-indigo-500 text-white shadow-lg hover:shadow-xl hover:shadow-brand-500/30 transition-all transform hover:scale-110 flex items-center justify-center group"
+          aria-label="Open AI assistant"
+        >
+          <MessageCircle className="w-6 h-6 group-hover:scale-110 transition-transform" />
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
+        </button>
+      </div>
     );
   }
   
