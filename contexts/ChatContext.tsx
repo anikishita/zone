@@ -113,15 +113,16 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   
   const [currentZone, setCurrentZoneState] = useState<ZoneChatConfig>(DEFAULT_ZONE);
   
-  // Initialize position from localStorage or default to bottom-right
+  // Initialize position from localStorage or default to bottom-right corner
   const [position, setPositionState] = useState<ChatPosition>(() => {
     const stored = localStorage.getItem(STORAGE_KEYS.POSITION);
     if (stored) {
       return JSON.parse(stored);
     }
-    // Default position (bottom-right with some padding) - safe check for window
+    // Default position at the very bottom-right corner - safe check for window
     if (typeof window !== 'undefined') {
-      return { x: window.innerWidth - 420, y: window.innerHeight - 570 };
+      // Position at the very corner (accounting for button size: 56px width and height)
+      return { x: window.innerWidth - 56, y: window.innerHeight - 56 };
     }
     return { x: 100, y: 100 }; // Fallback for SSR
   });
@@ -182,18 +183,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
   
   const setPosition = (newPosition: ChatPosition) => {
-    // Ensure position stays within viewport bounds - safe check for window
-    if (typeof window !== 'undefined') {
-      const maxX = window.innerWidth - 400; // Chat width
-      const maxY = window.innerHeight - 560; // Chat height
-      
-      setPositionState({
-        x: Math.max(0, Math.min(newPosition.x, maxX)),
-        y: Math.max(0, Math.min(newPosition.y, maxY))
-      });
-    } else {
-      setPositionState(newPosition);
-    }
+    // Allow positioning anywhere on screen without bounds restriction
+    setPositionState(newPosition);
   };
   
   const setIsOpen = (open: boolean) => {
