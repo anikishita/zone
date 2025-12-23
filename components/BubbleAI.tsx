@@ -40,7 +40,7 @@ const BubbleAI: React.FC = () => {
     if (!inputValue.trim() || !currentMode) return;
 
     const userMsg: Message = {
-      id: Date.now().toString(),
+      id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       role: 'user',
       content: inputValue,
       timestamp: Date.now()
@@ -51,12 +51,17 @@ const BubbleAI: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Create context-aware history with system prompt
+      // Create context-aware history with the current AI mode's system prompt
       const history = messages.map(m => ({ role: m.role, content: m.content }));
-      const responseText = await generateResponse(currentMode.id, history, userMsg.content);
+      
+      // Use the current mode's system prompt to give the AI the right personality
+      // We'll prepend it to the user's message for context
+      const contextualMessage = `[AI Mode: ${currentMode.name}. ${currentMode.systemPrompt}]\n\nUser: ${userMsg.content}`;
+      
+      const responseText = await generateResponse(currentMode.id, history, contextualMessage);
 
       const botMsg: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `bot-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         role: 'assistant',
         content: responseText,
         timestamp: Date.now()
@@ -66,7 +71,7 @@ const BubbleAI: React.FC = () => {
     } catch (error) {
       console.error('AI Response Error:', error);
       const errorMsg: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         role: 'assistant',
         content: "I'm having trouble connecting right now. Please try again.",
         timestamp: Date.now()
