@@ -1,30 +1,14 @@
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+// AI Service - Now using secure server-side API
+// The API key is kept secure on the server (Vercel serverless function)
+// Client makes requests to /api/chat which proxies to Gemini API
+
 import { ZoneChatConfig } from "../contexts/ChatContext";
-
-// Get API key from environment variable
-// For Vite apps, environment variables must be prefixed with VITE_ to be exposed to the client
-// In Vercel, set the variable as: VITE_GEMINI_API_KEY
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-
-// Initialize AI with API key if available
-let ai: GoogleGenAI | null = null;
-if (API_KEY) {
-  try {
-    ai = new GoogleGenAI({ apiKey: API_KEY });
-  } catch (error) {
-    console.error("Failed to initialize GoogleGenAI:", error);
-  }
-}
 
 export const generateAIResponse = async (
   zoneConfig: ZoneChatConfig,
   userMessage: string,
   conversationHistory: { role: string; content: string }[]
 ): Promise<string> => {
-  if (!ai) {
-    return "Hey! I need an API key to chat properly. But I'm still here to keep you company! 😊";
-  }
-  
   try {
     // Build conversation context
     const historyContext = conversationHistory
@@ -45,14 +29,37 @@ User: ${userMessage}
 
 ${zoneConfig.aiRole}:`;
     
-    const response: GenerateContentResponse = await ai.models.generateContent({
-      model: 'gemini-2.0-flash-exp',
-      contents: fullPrompt,
+    // Call our serverless function instead of Gemini directly
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: fullPrompt,
+        model: 'gemini-2.0-flash-exp'
+      })
     });
-    
-    return response.text || "I'm here! What's on your mind?";
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("API Error:", error);
+      
+      // Friendly fallback responses
+      const fallbacks = [
+        "Hmm, lost my train of thought. What were you saying?",
+        "My brain glitched for a sec. Can you say that again?",
+        "Connection hiccup! Mind repeating that?",
+        "Oops, didn't catch that. Try again?"
+      ];
+      return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    }
+
+    const data = await response.json();
+    return data.text || "I'm here! What's on your mind?";
+
   } catch (error) {
-    console.error("Gemini Error:", error);
+    console.error("Client Error:", error);
     
     // Friendly fallback responses
     const fallbacks = [
