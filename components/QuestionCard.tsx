@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { InterviewQuestion } from './interviewConfig';
 
@@ -24,6 +24,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   questionNumber
 }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+
+  // Reset selection when question changes
+  useEffect(() => {
+    setSelectedOption(null);
+  }, [question.id]);
 
   const handleOptionClick = (optionId: string) => {
     // Show selection feedback

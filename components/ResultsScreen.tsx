@@ -86,8 +86,8 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ answers, onRestart }) => 
           </p>
 
           {/* Bar Chart */}
-          <div className="w-full h-80">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="w-full" style={{ height: '320px' }}>
+            <ResponsiveContainer width="100%" height={320}>
               <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis 
