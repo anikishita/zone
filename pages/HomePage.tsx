@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Heart, Shield, Sparkles } from 'lucide-react';
 import ZoneCard from '../components/ZoneCard';
 import ChatBubble from '../components/ChatBubble';
+import { useZoneDetection } from '../contexts/ChatContext';
 import { ZoneConfig } from '../types';
 
 interface HomePageProps {
@@ -12,6 +13,9 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({ zones }) => {
   const navigate = useNavigate();
   const [showChatBubble, setShowChatBubble] = useState(false);
+  
+  // Notify chat context that we're on home page (no specific zone)
+  useZoneDetection(null);
 
   useEffect(() => {
     // Show chat bubble after a short delay
