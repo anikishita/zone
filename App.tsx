@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BookOpen, Mic, PenTool, Brain, Gamepad2, Briefcase, Heart, Shield, Sparkles } from 'lucide-react';
 import ZoneCard from './components/ZoneCard';
 import PracticeModal from './components/PracticeModal';
+import BubbleAI from './components/BubbleAI';
+import { useAIContext } from './contexts/AIContext';
 import { ZoneConfig } from './types';
 
 const ZONES: ZoneConfig[] = [
@@ -63,6 +65,16 @@ const ZONES: ZoneConfig[] = [
 
 const App: React.FC = () => {
   const [activeZone, setActiveZone] = useState<ZoneConfig | null>(null);
+  const { setCurrentZone } = useAIContext();
+
+  // Update AI context when active zone changes
+  useEffect(() => {
+    if (activeZone) {
+      setCurrentZone(activeZone.id);
+    } else {
+      setCurrentZone(null);
+    }
+  }, [activeZone, setCurrentZone]);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -214,6 +226,9 @@ const App: React.FC = () => {
           onClose={() => setActiveZone(null)} 
         />
       )}
+
+      {/* Floating Bubble AI Assistant - always visible */}
+      <BubbleAI />
     </div>
   );
 };

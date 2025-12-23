@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Send, Mic, RefreshCw, Volume2, BookOpen, PenTool, Brain, Gamepad2, Briefcase, ArrowRight } from 'lucide-react';
 import { ZoneConfig, ChatMessage, ZoneId } from '../types';
 import { generateInitialPrompt, generateResponse } from '../services/gemini';
+import { useAIContext } from '../contexts/AIContext';
 
 interface PracticeModalProps {
   zone: ZoneConfig;
@@ -67,6 +68,13 @@ const PracticeModal: React.FC<PracticeModalProps> = ({ zone, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { setCurrentZone } = useAIContext();
+
+  // Update AI context when zone is selected from grid
+  const handleZoneSelection = (zoneConfig: ZoneConfig) => {
+    setSelectedZone(zoneConfig);
+    setCurrentZone(zoneConfig.id);
+  };
 
   // Initialize session when a zone is selected
   useEffect(() => {
@@ -213,7 +221,7 @@ const PracticeModal: React.FC<PracticeModalProps> = ({ zone, onClose }) => {
                         bgColor: zoneOption.bgColor,
                         promptContext: zoneOption.id
                       };
-                      setSelectedZone(fullZoneConfig);
+                      handleZoneSelection(fullZoneConfig);
                     }}
                   >
                     {/* Icon in top left */}
