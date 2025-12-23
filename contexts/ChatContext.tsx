@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { ChatMessage, ZoneId } from '../types';
 
-interface ZoneConfig {
+interface ZoneChatConfig {
   zoneId: ZoneId | null;
   zoneName: string;
   aiRole: string;
@@ -21,8 +21,8 @@ interface ChatContextType {
   clearMessages: () => void;
   
   // Zone state
-  currentZone: ZoneConfig;
-  setCurrentZone: (zone: ZoneConfig) => void;
+  currentZone: ZoneChatConfig;
+  setCurrentZone: (zone: ZoneChatConfig) => void;
   
   // UI state
   isOpen: boolean;
@@ -37,7 +37,7 @@ interface ChatContextType {
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-const ZONE_CONFIGURATIONS: Record<ZoneId, Omit<ZoneConfig, 'zoneId'>> = {
+const ZONE_CONFIGURATIONS: Record<ZoneId, Omit<ZoneChatConfig, 'zoneId'>> = {
   reading: {
     zoneName: 'Reading Zone',
     aiRole: 'Calm Reading Companion',
@@ -88,7 +88,7 @@ Be supportive and realistic. Speak casually, like chatting over coffee.`
   }
 };
 
-const DEFAULT_ZONE: ZoneConfig = {
+const DEFAULT_ZONE: ZoneChatConfig = {
   zoneId: null,
   zoneName: 'ZONE',
   aiRole: 'Zone Assistant',
@@ -111,7 +111,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return stored ? JSON.parse(stored) : [];
   });
   
-  const [currentZone, setCurrentZoneState] = useState<ZoneConfig>(DEFAULT_ZONE);
+  const [currentZone, setCurrentZoneState] = useState<ZoneChatConfig>(DEFAULT_ZONE);
   
   // Initialize position from localStorage or default to bottom-right
   const [position, setPositionState] = useState<ChatPosition>(() => {
@@ -119,8 +119,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (stored) {
       return JSON.parse(stored);
     }
-    // Default position (bottom-right with some padding)
-    return { x: window.innerWidth - 420, y: window.innerHeight - 570 };
+    // Default position (bottom-right with some padding) - safe check for window
+    if (typeof window !== 'undefined') {
+      return { x: window.innerWidth - 420, y: window.innerHeight - 570 };
+    }
+    return { x: 100, y: 100 }; // Fallback for SSR
   });
   
   // Initialize isOpen from localStorage
@@ -155,7 +158,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.removeItem(STORAGE_KEYS.MESSAGES);
   };
   
-  const setCurrentZone = (zone: ZoneConfig) => {
+  const setCurrentZone = (zone: ZoneChatConfig) => {
     const previousZoneId = currentZone.zoneId;
     setCurrentZoneState(zone);
     
@@ -179,14 +182,18 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
   
   const setPosition = (newPosition: ChatPosition) => {
-    // Ensure position stays within viewport bounds
-    const maxX = window.innerWidth - 400; // Chat width
-    const maxY = window.innerHeight - 560; // Chat height
-    
-    setPositionState({
-      x: Math.max(0, Math.min(newPosition.x, maxX)),
-      y: Math.max(0, Math.min(newPosition.y, maxY))
-    });
+    // Ensure position stays within viewport bounds - safe check for window
+    if (typeof window !== 'undefined') {
+      const maxX = window.innerWidth - 400; // Chat width
+      const maxY = window.innerHeight - 560; // Chat height
+      
+      setPositionState({
+        x: Math.max(0, Math.min(newPosition.x, maxX)),
+        y: Math.max(0, Math.min(newPosition.y, maxY))
+      });
+    } else {
+      setPositionState(newPosition);
+    }
   };
   
   const setIsOpen = (open: boolean) => {
@@ -237,4 +244,4 @@ export const useZoneDetection = (zoneId: ZoneId | null) => {
 
 // Export zone configurations for use in AI service
 export { ZONE_CONFIGURATIONS, DEFAULT_ZONE };
-export type { ZoneConfig, ChatPosition };
+export type { ZoneChatConfig, ChatPosition };

@@ -1,5 +1,5 @@
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
-import { ZoneConfig } from "../contexts/ChatContext";
+import { ZoneChatConfig } from "../contexts/ChatContext";
 
 // Get API key from environment variable
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
@@ -15,7 +15,7 @@ if (API_KEY) {
 }
 
 export const generateAIResponse = async (
-  zoneConfig: ZoneConfig,
+  zoneConfig: ZoneChatConfig,
   userMessage: string,
   conversationHistory: { role: string; content: string }[]
 ): Promise<string> => {
@@ -64,7 +64,7 @@ ${zoneConfig.aiRole}:`;
 };
 
 // Welcome message when user first opens chat
-export const getWelcomeMessage = (zoneConfig: ZoneConfig): string => {
+export const getWelcomeMessage = (zoneConfig: ZoneChatConfig): string => {
   if (zoneConfig.zoneId === null) {
     return "Hey there! Pick a zone and let's get started. I'm here to help! 👋";
   }
