@@ -29,6 +29,8 @@ User: ${userMessage}
 
 ${zoneConfig.aiRole}:`;
     
+    console.log('Sending request to /api/chat');
+    
     // Call our serverless function instead of Gemini directly
     const response = await fetch('/api/chat', {
       method: 'POST',
@@ -41,34 +43,33 @@ ${zoneConfig.aiRole}:`;
       })
     });
 
+    console.log('Response status:', response.status);
+
     if (!response.ok) {
-      const error = await response.json();
-      console.error("API Error:", error);
+      const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+      console.error("API Error Response:", error);
       
-      // Friendly fallback responses
-      const fallbacks = [
-        "Hmm, lost my train of thought. What were you saying?",
-        "My brain glitched for a sec. Can you say that again?",
-        "Connection hiccup! Mind repeating that?",
-        "Oops, didn't catch that. Try again?"
-      ];
-      return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+      // More helpful error message
+      if (response.status === 404) {
+        return "I'm having trouble connecting. Make sure the API is deployed correctly. 🔧";
+      }
+      
+      return `Sorry, I'm having technical difficulties (${response.status}). The setup might need attention. Try refreshing the page?`;
     }
 
     const data = await response.json();
+    console.log('AI Response received:', data.text?.substring(0, 50));
     return data.text || "I'm here! What's on your mind?";
 
   } catch (error) {
     console.error("Client Error:", error);
     
-    // Friendly fallback responses
-    const fallbacks = [
-      "Hmm, lost my train of thought. What were you saying?",
-      "My brain glitched for a sec. Can you say that again?",
-      "Connection hiccup! Mind repeating that?",
-      "Oops, didn't catch that. Try again?"
-    ];
-    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    // Helpful error message that indicates what went wrong
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      return "I can't reach the server right now. Are you online? Try refreshing the page. 🌐";
+    }
+    
+    return "Something went wrong on my end. Try refreshing the page or check the console for details. 🔧";
   }
 };
 

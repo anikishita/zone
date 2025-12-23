@@ -113,18 +113,19 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   
   const [currentZone, setCurrentZoneState] = useState<ZoneChatConfig>(DEFAULT_ZONE);
   
-  // Initialize position from localStorage or default to bottom-right corner
+  // Initialize position from localStorage or default to left-middle
   const [position, setPositionState] = useState<ChatPosition>(() => {
     const stored = localStorage.getItem(STORAGE_KEYS.POSITION);
     if (stored) {
       return JSON.parse(stored);
     }
-    // Default position at the very bottom-right corner - safe check for window
+    // Default position at left-middle - safe check for window
     if (typeof window !== 'undefined') {
-      // Position at the very corner (accounting for button size: 56px width and height)
-      return { x: window.innerWidth - 56, y: window.innerHeight - 56 };
+      // Position at left-middle (accounting for button size: 56px width and height)
+      // x: 0 for left edge, y: center of viewport
+      return { x: 0, y: (window.innerHeight / 2) - 28 };
     }
-    return { x: 100, y: 100 }; // Fallback for SSR
+    return { x: 0, y: 100 }; // Fallback for SSR (left side)
   });
   
   // Initialize isOpen from localStorage
