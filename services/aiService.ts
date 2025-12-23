@@ -1,8 +1,10 @@
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { ZoneChatConfig } from "../contexts/ChatContext";
 
-// Get API key from environment variable (supports both VITE_ prefixed and non-prefixed)
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.GEMINI_API_KEY;
+// Get API key from environment variable
+// For Vite apps, environment variables must be prefixed with VITE_ to be exposed to the client
+// In Vercel, set the variable as: VITE_GEMINI_API_KEY
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 // Initialize AI with API key if available
 let ai: GoogleGenAI | null = null;
